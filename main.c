@@ -6,12 +6,19 @@
 
 void load_db(char* db_name);
 int load_db_list();
+void console_loop();
 
 int main (void) {
 	//load all databases into memory
 	load_db_list();
 
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
+	console_loop();
+
+	printf("Bye !\n");
+}
+
+void console_loop(){
 	char user_input[255] = "";
 	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
 		printf(">");
@@ -28,8 +35,6 @@ int main (void) {
 		printf("	Column1		Column2		Column3\n");
 		printf("0:	Row1		Row2		Row3\n");
 	}
-
-	printf("Bye !\n");
 }
 
 void load_db(char* db_name){
