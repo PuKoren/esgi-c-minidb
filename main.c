@@ -3,19 +3,16 @@
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <vector>
 
+void load_table(char* table_name);
 void load_db(char* db_name);
 int load_db_list();
 void console_loop();
 
 int main (void) {
 	//load all databases into memory
-	load_db_list("databases/", &load_db);
-	load_db_list();
+	iterate_folder("databases/", load_db);
+	//load_db_list();
 
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
 	console_loop();
@@ -35,10 +32,8 @@ void console_loop(){
 		if(p){
 			*p = 0;
 		}
-		
 		if(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
 			//parse the command line and do the sorting
-			
 			//print the result
 			printf("	Column1		Column2		Column3\n");
 			printf("0	Row1		Row2		Row3\n");
@@ -48,13 +43,18 @@ void console_loop(){
 	}
 }
 
-void load_db(char* db_name){
-	printf("Loading ");
-	printf(db_name);
-	printf("...\n");
+void load_table(char* table_name){
+	printf("	-%s\n", table_name);
 }
 
-void iterate_folder(char* folder_name, void* &f){
+void load_db(char* db_name){
+	printf("Loading %s...\n", db_name);
+	char path[50] = "databases/";
+	strcat(path, db_name);
+	iterate_folder(path, load_table);
+}
+
+int iterate_folder(char* folder_name, void (*f(char*))){
 	DIR* dirp = opendir(folder_name);
 	int errno;
 	struct dirent* dp;
@@ -64,7 +64,9 @@ void iterate_folder(char* folder_name, void* &f){
 		errno = 0;
 		if ((dp = readdir(dirp)) != NULL && (strcmp(dp->d_name, ".svn") != 0) && (strcmp(dp->d_name, ".") != 0)) {
 			db_count++;
-			*f(dp->d_name);
+			char path[50] = "";
+			strcat(path, dp->d_name);
+			(*f)(dp->d_name);
 		} else {
 			if (errno == 0) {
 				closedir(dirp);
