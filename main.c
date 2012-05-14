@@ -4,6 +4,29 @@
 #include <string.h>
 #include <dirent.h>
 
+void load_db(char* db_name);
+int load_db_list();
+
+int main (void) {
+	//load all databases into memory
+	load_db_list();
+
+	//execute the console thing, where user can enter commands (while command != exit listen for another command)
+	char user_input[] = "";
+	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
+		printf(">");
+		//get command line
+		scanf("%s", user_input);
+		//parse the command line and do the sorting
+
+		//print the result
+		printf("	Column1		Column2		Column3\n");
+		printf("0:	Row1		Row2		Row3\n");
+	}
+
+	printf("Bye !\n");
+}
+
 void load_db(char* db_name){
 	printf("Loading ");
 	printf(db_name);
@@ -32,24 +55,4 @@ int load_db_list(){
 	}
 	printf("\n");
 	return db_count;
-}
-
-int main (void) {
-	//load all databases into memory
-	load_db_list();
-
-	//execute the console thing, where user can enter commands (while command != exit listen for another command)
-	char user_input[] = "";
-	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
-		printf(">");
-		//get command line
-		scanf("%s", user_input);
-		//parse the command line and do the sorting
-
-		//print the result
-	}
-
-	printf("	Column1		Column2		Column3\n");
-	printf("0:	Row1		Row2		Row3\n");
-	printf("Exit...\n");
 }
