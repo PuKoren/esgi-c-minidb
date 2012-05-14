@@ -12,11 +12,11 @@ int main (void) {
 	load_db_list();
 
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
-	char user_input[] = "";
+	char user_input[255] = "";
 	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
 		printf(">");
 		//get command line
-		scanf("%s", user_input);
+		fgets(user_input, sizeof chaine, stdin);
 		//parse the command line and do the sorting
 
 		//print the result
