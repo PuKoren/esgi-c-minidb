@@ -43,14 +43,13 @@ void console_loop(){
 
 void load_table(char* table_name){
 	printf("	%s\n", table_name);
+	
 }
 
 void load_db(char* db_name){
-	printf("Loading %s...\n", db_name);
-	char path[50] = "databases/";
-	strcat(path, db_name);
-	strcat(path, "/");
-	iterate_folder(path, load_table);
+	printf("Loading %s\n", db_name);
+	strcat(db_name, "/");
+	iterate_folder(db_name, load_table);
 }
 
 int iterate_folder(char* folder_name, void (*f(char*))){
@@ -63,7 +62,10 @@ int iterate_folder(char* folder_name, void (*f(char*))){
 		errno = 0;
 		if ((dp = readdir(dirp)) != NULL && (strcmp(dp->d_name, "..") != 0) && (strcmp(dp->d_name, ".svn") != 0) && (strcmp(dp->d_name, ".") != 0)) {
 			db_count++;
-			(*f)(dp->d_name);
+			char path[50] = "";
+			strcpy(path, folder_name);
+			strcat(path, dp->d_name);
+			(*f)(path);
 		} else {
 			if(dp == NULL){
 				closedir(dirp);
