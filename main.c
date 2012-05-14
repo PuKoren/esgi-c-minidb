@@ -40,7 +40,7 @@ void console_loop(){
 			
 			//print the result
 			printf("	Column1		Column2		Column3\n");
-			printf("0:	Row1		Row2		Row3\n");
+			printf("0	Row1		Row2		Row3\n");
 		}else{
 			loop_exit = 1;
 		}
@@ -51,43 +51,6 @@ void load_db(char* db_name){
 	printf("Loading ");
 	printf(db_name);
 	printf("...\n");
-	DIR* dirp = opendir(strcat("databases/", db_name));
-	int errno;
-	struct dirent* dp;
-	int db_count = 0;
-
-	while (dirp) {
-		errno = 0;
-		if ((dp = readdir(dirp)) != NULL && (strcmp(dp->d_name, ".svn") != 0) && (strcmp(dp->d_name, ".") != 0)) {
-			db_count++;
-			ifstream inFile(dp->d_name);
-			string line;
-			int linenum = 0;
-			while (getline (inFile, line))
-			{
-				linenum++;
-				cout << "\nLine #" << linenum << ":" << endl;
-				istringstream linestream(line);
-				string item;
-				int itemnum = 0;
-				while (getline (linestream, item, ','))
-				{
-					itemnum++;
-					cout << "Item #" << itemnum << ": " << item << endl;
-				}
-			}
-			return 0;
-		} else {
-			if (errno == 0) {
-				closedir(dirp);
-				return 0;
-			}
-			closedir(dirp);
-			return -1;
-		}
-	}
-	printf("\n");
-    return 0;
 }
 
 int load_db_list(){
