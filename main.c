@@ -16,8 +16,8 @@ int main (void) {
 	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
 		printf(">");
 		//get command line
-		fgets(user_input, sizeof chaine, stdin);
-		char *p = strchr(chaine, '\n');
+		fgets(user_input, sizeof user_input, stdin);
+		char *p = strchr(user_input, '\n');
 		//remove \n
 		if(p){
 			*p = 0;
