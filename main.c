@@ -74,29 +74,3 @@ int iterate_folder(char* folder_name, void (*f(char*))){
 	printf("\n");
 	return db_count;
 }
-
-/*
-int load_db_list(){
-	DIR* dirp = opendir("databases/");
-	int errno;
-	struct dirent* dp;
-	int db_count = 0;
-
-	while (dirp) {
-		errno = 0;
-		if ((dp = readdir(dirp)) != NULL && (strcmp(dp->d_name, ".svn") != 0) && (strcmp(dp->d_name, ".") != 0)) {
-			db_count++;
-			load_db(dp->d_name);
-		} else {
-			if (errno == 0) {
-				closedir(dirp);
-				return 0;
-			}
-			closedir(dirp);
-			return -1;
-		}
-	}
-	printf("\n");
-	return db_count;
-}
-*/
