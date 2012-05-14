@@ -20,7 +20,8 @@ int main (void) {
 
 void console_loop(){
 	char user_input[255] = "";
-	while(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
+	int loop_exit = 0;
+	while(!loop_exit){
 		printf(">");
 		//get command line
 		fgets(user_input, sizeof user_input, stdin);
@@ -29,11 +30,16 @@ void console_loop(){
 		if(p){
 			*p = 0;
 		}
-		//parse the command line and do the sorting
-
-		//print the result
-		printf("	Column1		Column2		Column3\n");
-		printf("0:	Row1		Row2		Row3\n");
+		
+		if(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
+			//parse the command line and do the sorting
+			
+			//print the result
+			printf("	Column1		Column2		Column3\n");
+			printf("0:	Row1		Row2		Row3\n");
+		}else{
+			loop_exit = 1;
+		}
 	}
 }
 
