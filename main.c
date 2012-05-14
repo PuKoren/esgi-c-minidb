@@ -14,6 +14,7 @@ void console_loop();
 
 int main (void) {
 	//load all databases into memory
+	load_db_list("databases/", &load_db);
 	load_db_list();
 
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
@@ -51,6 +52,30 @@ void load_db(char* db_name){
 	printf("Loading ");
 	printf(db_name);
 	printf("...\n");
+}
+
+void iterate_folder(char* folder_name, void* &f){
+	DIR* dirp = opendir(folder_name);
+	int errno;
+	struct dirent* dp;
+	int db_count = 0;
+
+	while (dirp) {
+		errno = 0;
+		if ((dp = readdir(dirp)) != NULL && (strcmp(dp->d_name, ".svn") != 0) && (strcmp(dp->d_name, ".") != 0)) {
+			db_count++;
+			*f(dp->d_name);
+		} else {
+			if (errno == 0) {
+				closedir(dirp);
+				return 0;
+			}
+			closedir(dirp);
+			return -1;
+		}
+	}
+	printf("\n");
+	return db_count;
 }
 
 int load_db_list(){
