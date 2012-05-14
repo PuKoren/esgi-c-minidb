@@ -17,6 +17,11 @@ int main (void) {
 		printf(">");
 		//get command line
 		fgets(user_input, sizeof chaine, stdin);
+		char *p = strchr(chaine, '\n');
+		//remove \n
+		if(p){
+			*p = 0;
+		}
 		//parse the command line and do the sorting
 
 		//print the result
