@@ -3,15 +3,19 @@
 #include <unistd.h>
 #include <string.h>
 #include <dirent.h>
+#include "lib/csv.c"
+#include "lib/hashmap.c"
 
 void load_table(char* table_name);
 void load_db(char* db_name);
 void console_loop();
 
+hashmap* dbs;
+
 int main (void) {
 	//load all databases into memory
+	dbs = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
 	iterate_folder("databases/", load_db);
-
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
 	console_loop();
 
@@ -31,8 +35,8 @@ void console_loop(){
 			*p = 0;
 		}
 		if(strcmp(user_input, "quit") != 0 && strcmp(user_input, "exit") != 0){
-			//parse the command line and do the sorting
-			//print the result
+			//TODO: parse the command line and do the sorting
+			//TODO: print the result
 			printf("	Column1		Column2		Column3\n");
 			printf("0	Row1		Row2		Row3\n");
 		}else{
@@ -42,13 +46,48 @@ void console_loop(){
 }
 
 void load_table(char* table_name){
-	printf("	%s\n", table_name);
-	
+	//TODO: load csv file into memory
+	FILE *file = fopen ( table_name, "r" );
+	//get db name
+	char *db_name = strtok(table_name, "/");
+	db_name = strtok(NULL, "/");
+	//get table name
+	char *short_table_name = strtok(NULL, "/");
+	printf("        -%s\n", short_table_name);
+	hmap_add(hmap_get(dbs, db_name), short_table_name, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
+	if ( file != NULL )
+	{
+		char line [512]; /* or other suitable maximum line size */
+		FIELDS* columns;
+		int firstLine = 1;
+		hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "fields", mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
+		while ( fgets ( line, sizeof line, file ) != NULL ) /* read a line */
+		{
+			if(!firstLine){
+				FIELDS* pfields = CsvToFields(line);
+				free(pfields);
+			}else{
+				columns = CsvToFields(line);
+				hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "columns", columns);
+				firstLine = 0;
+			}
+		}
+		fclose ( file );
+	}
+	else
+	{
+		perror ( table_name ); /* why didn't the file open? */
+	}
 }
 
 void load_db(char* db_name){
 	printf("Loading %s\n", db_name);
 	strcat(db_name, "/");
+	char splited[20];
+	strcpy(splited, db_name);
+	strtok(splited, "/");
+	//printf("DB_TOK: %s\n", strtok(NULL, "/"));
+	hmap_add(dbs, strtok(NULL, "/"), mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
 	iterate_folder(db_name, load_table);
 }
 
