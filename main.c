@@ -13,14 +13,14 @@ int iterate_folder(char*, void (*f)(char*, hashmap*), hashmap*);
 
 int main (void) {
 	//load all databases into memory
-	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, map_del_fn);
+	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
 	iterate_folder("databases/", load_db, dbs);
 	//printf("Test:%s\n", (char*)hmap_get(dbs, "test"));
 	//printf("GET Array['db1']['test.'] = '%s'\n", (char*)hmap_get(hmap_get(dbs, "db1"), "test."));
 	//printf("GET Array['db1']['quizz.csv']['test'] = '%s'\n", (char*)hmap_get(hmap_get(hmap_get(dbs, "db1"), "quizz.csv"), "test"));
-	hashmap* map = hmap_get(dbs, "db2");
+	hashmap* map = hmap_get(dbs, "db1");
 	if(map == NULL){
-			printf("Database db2 is empty.\n");
+			printf("Database db1 is empty.\n");
 	}else{
 		hashmap* map2 = hmap_get(map, "quizz.csv");
 		if(map2 == NULL){
@@ -95,6 +95,7 @@ void load_table(char* table_name, hashmap *dbs){
 		hmap_add(table, "fieldcount", index);
 		hmap_add(table, "fields", fields);
 		hmap_add(dbs, short_table_name, table);
+		printf("Putting %s in %s. %i rows.\n", short_table_name,db_name, index);
 		//printf("Fields count:%i\n", hmap_get(hmap_get(hmap_get(dbs, db_name), short_table_name), "fieldcount"));
 		fclose(file);
 	}
@@ -111,6 +112,7 @@ void load_db(char* db_name, hashmap* dbs){
 	strcpy(folder, db_name);
 	char *splited = strtok(db_name, "/");
 	splited = strtok(NULL, "/");
+	printf("Creating the %s collection.\n", splited);
 	hmap_add(dbs, splited, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
 	//printf("File %s : map['%s']['test'] = toto", db_name, splited);
 	//hmap_add(hmap_get(dbs, splited), "test", "toto");
