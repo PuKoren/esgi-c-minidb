@@ -57,32 +57,33 @@ void load_table(char* table_name, hashmap *dbs){
 	//get table name
 	char *short_table_name = strtok(NULL, "/");
 	printf("        -%s\n", short_table_name);
-	printf("Create hashmap in dbs at index %s: %s\n", db_name, short_table_name);
-	hmap_add(hmap_get(dbs, db_name), short_table_name, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
-	printf("SET Array['%s']['test.'] = 'toto'\n", db_name);
-	hmap_add(hmap_get(dbs, db_name), "test.", "toto");
-	printf("SET Array['%s']['%s']['test'] = 'toto'\n", db_name, short_table_name);
-	hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "test", "toto");
+	
+	//hmap_add(hmap_get(dbs, db_name), short_table_name, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
+	hashmap* table = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
+	
 	//printf("%s\n", hmap_get(hmap_get(dbs, db_name), "test"));
 	if(file != NULL){
 		char line [512]; /* or other suitable maximum line size */
 		FIELDS* columns;
 		int firstLine = 1;
 		//printf("Adding fields map in %s map in %s map in dbs\n", short_table_name, db_name);
-		hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "fields", mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
+		hashmap *fields = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
+		//hmap_add(table, "fields", mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
 		int index = 0;
 		while(fgets(line, sizeof line, file ) != NULL){
 			if(!firstLine){
 				FIELDS* pfields = CsvToFields(line);
-				hmap_add(hmap_get(hmap_get(hmap_get(dbs, db_name), short_table_name), "fields"), index, pfields);
+				hmap_add(fields, index, pfields);
 				index++;
 			}else{
 				columns = CsvToFields(line);
-				hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "columns", columns);
+				hmap_add(table, "columns", columns);
 				firstLine = 0;
 			}
 		}
-		hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "fieldcount", index);
+		hmap_add(table, "fieldcount", index);
+		hmap_add(table, "fields", fields);
+		hmap_add(dbs, short_table_name, table);
 		//printf("Fields count:%i\n", hmap_get(hmap_get(hmap_get(dbs, db_name), short_table_name), "fieldcount"));
 		fclose(file);
 	}
