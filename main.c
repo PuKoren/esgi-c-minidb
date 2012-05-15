@@ -15,8 +15,9 @@ int main (void) {
 	//load all databases into memory
 	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
 	iterate_folder("databases/", load_db, dbs);
-	printf("Test:%s\n", (char*)hmap_get(dbs, "test"));
-	printf("Array:\n", hmap_get(hmap_get(dbs, "db1"), "test"));
+	//printf("Test:%s\n", (char*)hmap_get(dbs, "test"));
+	printf("GET Array['db1']['test.'] = '%s'\n", hmap_get(hmap_get(dbs, "db1"), "test."));
+	printf("GET Array['db1']['quizz.csv']['test'] = '%s'\n", hmap_get(hmap_get(hmap_get(dbs, "db1"), "quizz.csv"), "test"));
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
 	console_loop();	
 	free_hmap(dbs);
@@ -56,19 +57,21 @@ void load_table(char* table_name, hashmap *dbs){
 	//get table name
 	char *short_table_name = strtok(NULL, "/");
 	printf("        -%s\n", short_table_name);
+	printf("Create hashmap in dbs at index %s: %s\n", db_name, short_table_name);
 	hmap_add(hmap_get(dbs, db_name), short_table_name, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
-	hmap_add(hmap_get(dbs, db_name), "test", "toto");
+	printf("SET Array['%s']['test.'] = 'toto'\n", db_name);
+	hmap_add(hmap_get(dbs, db_name), "test.", "toto");
+	printf("SET Array['%s']['%s']['test'] = 'toto'\n", db_name, short_table_name);
+	hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "test", "toto");
 	//printf("%s\n", hmap_get(hmap_get(dbs, db_name), "test"));
-	if ( file != NULL )
-	{
+	if(file != NULL){
 		char line [512]; /* or other suitable maximum line size */
 		FIELDS* columns;
 		int firstLine = 1;
 		//printf("Adding fields map in %s map in %s map in dbs\n", short_table_name, db_name);
 		hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "fields", mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
 		int index = 0;
-		while ( fgets ( line, sizeof line, file ) != NULL ) /* read a line */
-		{
+		while(fgets(line, sizeof line, file ) != NULL){
 			if(!firstLine){
 				FIELDS* pfields = CsvToFields(line);
 				hmap_add(hmap_get(hmap_get(hmap_get(dbs, db_name), short_table_name), "fields"), index, pfields);
@@ -81,23 +84,25 @@ void load_table(char* table_name, hashmap *dbs){
 		}
 		hmap_add(hmap_get(hmap_get(dbs, db_name), short_table_name), "fieldcount", index);
 		//printf("Fields count:%i\n", hmap_get(hmap_get(hmap_get(dbs, db_name), short_table_name), "fieldcount"));
-		fclose ( file );
+		fclose(file);
 	}
 	else
 	{
-		perror ( table_name ); /* why didn't the file open? */
+		perror(table_name);/* why didn't the file open? */
 	}
 }
 
 void load_db(char* db_name, hashmap* dbs){
 	printf("Loading %s\n", db_name);
 	strcat(db_name, "/");
-	char splited[20];
-	strcpy(splited, db_name);
-	strtok(splited, "/");
-	//printf("DB_TOK: %s\n", strtok(NULL, "/"));
-	hmap_add(dbs, strtok(NULL, "/"), mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));	
-	iterate_folder(db_name, load_table, dbs);
+	char folder[40];
+	strcpy(folder, db_name);
+	char *splited = strtok(db_name, "/");
+	splited = strtok(NULL, "/");
+	hmap_add(dbs, splited, mk_hmap(str_hash_fn, str_eq_fn, str_del_fn));
+	//printf("File %s : map['%s']['test'] = toto", db_name, splited);
+	//hmap_add(hmap_get(dbs, splited), "test", "toto");
+	iterate_folder(folder, load_table, dbs);
 }
 
 int iterate_folder(char* folder_name, void (*f)(char*, hashmap*), hashmap* dbs){
