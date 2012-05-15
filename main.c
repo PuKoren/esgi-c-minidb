@@ -13,7 +13,7 @@ int iterate_folder(char*, void (*f)(char*, hashmap*), hashmap*);
 
 int main (void) {
 	//load all databases into memory
-	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
+	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, map_del_fn);
 	iterate_folder("databases/", load_db, dbs);
 	//printf("Test:%s\n", (char*)hmap_get(dbs, "test"));
 	//printf("GET Array['db1']['test.'] = '%s'\n", (char*)hmap_get(hmap_get(dbs, "db1"), "test."));

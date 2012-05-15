@@ -212,4 +212,26 @@ void str_del_fn(val q) {
 	free(q);
 };
 
+uint32_t map_hash_fn(key in) {
+	static uint32_t hash;
+	static unsigned char c;
+	
+	hash = 5381;
+
+	while (c != '\0') {
+		c = *(unsigned char*) in++;
+		hash = ((hash << 5) + hash) + c;
+	}
+
+	return hash;
+}
+
+bool map_eq_fn(key a, key b) {
+	return (strcmp((char*) a, (char*) b) == 0) ? true : false;
+}
+
+void map_del_fn(val q) {
+	free_hmap(q);
+};
+
 #endif
