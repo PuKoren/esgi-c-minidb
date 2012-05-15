@@ -16,8 +16,8 @@ int main (void) {
 	hashmap *dbs = mk_hmap(str_hash_fn, str_eq_fn, str_del_fn);
 	iterate_folder("databases/", load_db, dbs);
 	//printf("Test:%s\n", (char*)hmap_get(dbs, "test"));
-	printf("GET Array['db1']['test.'] = '%s'\n", hmap_get(hmap_get(dbs, "db1"), "test."));
-	printf("GET Array['db1']['quizz.csv']['test'] = '%s'\n", hmap_get(hmap_get(hmap_get(dbs, "db1"), "quizz.csv"), "test"));
+	printf("GET Array['db1']['test.'] = '%s'\n", (char*)hmap_get(hmap_get(dbs, "db1"), "test."));
+	printf("GET Array['db1']['quizz.csv']['test'] = '%s'\n", (char*)hmap_get(hmap_get(hmap_get(dbs, "db1"), "quizz.csv"), "test"));
 	//execute the console thing, where user can enter commands (while command != exit listen for another command)
 	console_loop();	
 	free_hmap(dbs);
